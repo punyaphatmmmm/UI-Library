@@ -1,0 +1,198 @@
+-- Load UI Library
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/x2zu/OPEN-SOURCE-UI-ROBLOX/refs/heads/main/X2ZU%20UI%20ROBLOX%20OPEN%20SOURCE/DummyUi-leak-by-x2zu/fetching-main/Tools/Framework.luau"))()
+-- Create Main Window
+local Window = Library:Window({
+    Title = "dmo hub",
+    Desc = "dmo on top",
+    Icon = 105059922903197,
+    Theme = "Dark",
+    Config = {
+        Keybind = Enum.KeyCode.LeftControl,
+        Size = UDim2.new(0, 500, 0, 400)
+    },
+    CloseUIButton = {
+        Enabled = true,
+        Text = "👽"
+    }
+})
+
+-- Sidebar Vertical Separator
+local SidebarLine = Instance.new("Frame")
+SidebarLine.Size = UDim2.new(0, 1, 1, 0)
+SidebarLine.Position = UDim2.new(0, 140, 0, 0) -- adjust if needed
+SidebarLine.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+SidebarLine.BorderSizePixel = 0
+SidebarLine.ZIndex = 5
+SidebarLine.Name = "SidebarLine"
+SidebarLine.Parent = game:GetService("CoreGui") -- Or Window.Gui if accessible
+
+
+-- Tab
+local m = Window:Tab({Title = "หน้าหลัก", Icon = "star"})
+local s = Window:Tab({Title = "ตั้งค่า", Icon = "wrench"})
+local g = Window:Tab({Title = "สคริปแมพอื่นๆ", Icon = "navigation"})
+    -- Button
+    m:Button({
+        Title = "บิน",
+        Desc = "ก็สคริปบินนั่นแหละไอควาย",
+        Callback = function()
+            loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-fly-v3-44404"))()
+            Window:Notify({
+                Title = "Button",
+                Desc = "Action performed successfully.",
+                Time = 3
+            })
+        end
+    })
+    -- Button
+    m:Button({
+        Title = "คำสั่ง",
+        Desc = "ก็คำสั่งไงไอควาย",
+        Callback = function()
+            loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))();
+            Window:Notify({
+                Title = "Button",
+                Desc = "Action performed successfully.",
+                Time = 3
+            })
+        end
+    })
+-- =========================
+-- ปุ่ม Teleport
+-- =========================
+local teleportEnabled = false
+local floatingTeleportButton
+
+-- ฟังก์ชันเปิด Teleport Mode
+local function startTeleport()
+    local UIS = game:GetService("UserInputService")
+    local player = game.Players.LocalPlayer
+    local mouse = player:GetMouse()
+
+    local function onClick()
+        if teleportEnabled then
+            local targetPos = mouse.Hit.Position + Vector3.new(0, 3, 0) -- ยกขึ้นเล็กน้อย
+            local char = player.Character
+            if char then
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.CFrame = CFrame.new(targetPos)
+                end
+            end
+        end
+    end
+
+    -- เชื่อม Event
+    local clickConnection = mouse.Button1Down:Connect(onClick)
+    
+    -- คืนค่าปิด
+    return clickConnection
+end
+
+local teleportConnection
+
+-- =========================
+-- ปุ่มปกติในหมวด Teleport
+    m:Toggle({
+    Title = "คริป Teleport",
+    Desc  = "กดเพื่อเปิด/ปิด Teleport Mode",
+    Value = false,
+    Callback = function(state)
+        teleportEnabled = state
+        if state then
+            teleportConnection = startTeleport()
+        elseif teleportConnection then
+            teleportConnection:Disconnect()
+            teleportConnection = nil
+        end
+    end
+})
+
+-- =========================
+-- ปุ่มลอย
+local function createFloatingTeleportButton()
+    if floatingTeleportButton then return end
+
+    floatingTeleportButton = Instance.new("TextButton")
+    floatingTeleportButton.Size = UDim2.new(0, 140, 0, 50)
+    floatingTeleportButton.Position = UDim2.new(0.5, -70, 0.4, 0)
+    floatingTeleportButton.AnchorPoint = Vector2.new(0.5, 0)
+    floatingTeleportButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    floatingTeleportButton.TextColor3 = Color3.fromRGB(255,255,255)
+    floatingTeleportButton.Text = teleportEnabled and "Teleport: ON" or "Teleport: OFF"
+    floatingTeleportButton.Parent = FloatingGui
+    floatingTeleportButton.Active = true
+    floatingTeleportButton.Draggable = true
+
+    floatingTeleportButton.MouseButton1Click:Connect(function()
+        teleportEnabled = not teleportEnabled
+        floatingTeleportButton.Text = teleportEnabled and "Teleport: ON" or "Teleport: OFF"
+        if teleportEnabled then
+            teleportConnection = startTeleport()
+        elseif teleportConnection then
+            teleportConnection:Disconnect()
+            teleportConnection = nil
+        end
+    end)
+end
+
+
+-- =========================
+-- ปุ่ม Reduce Graphics V.1
+-- =========================
+s:Button({
+    Title = "ลดกราฟฟิก V.1",
+    Desc  = "ทุก Part เรียบเนียน",
+    Callback = function()
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                obj.Material = Enum.Material.SmoothPlastic
+                obj.Reflectance = 0
+            elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+                obj.Enabled = false
+            end
+        end
+        print("✅ ลดกราฟฟิก V.1 เรียบร้อย")
+    end
+})
+
+-- =========================
+-- ปุ่ม Reduce Graphics V.2
+-- =========================
+s:Button({
+    Title = "ลดกราฟฟิก V.2",
+    Desc  = "เรียบเนียน + ลบหมอกและเอฟเฟกต์",
+    Callback = function()
+        -- เรียบเนียนเหมือน V.1
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                obj.Material = Enum.Material.SmoothPlastic
+                obj.Reflectance = 0
+            elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+                obj.Enabled = false
+            elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                obj:Destroy()
+            end
+        end
+
+        -- ลบหมอก/เอฟเฟกต์จาก Lighting
+        local Lighting = game:GetService("Lighting")
+        Lighting.FogEnd = 100000
+        Lighting.FogStart = 0
+        Lighting.GlobalShadows = false
+        print("✅ ลดกราฟฟิก V.2 เรียบร้อย")
+    end
+})
+
+-- =========================
+-- ปุ่ม เพิ่มแสงหน้าจอ
+-- =========================
+s:Button({
+    Title = "เพิ่มแสงหน้าจอ",
+    Desc  = "หน้าจอสว่างขึ้นเล็กน้อย",
+    Callback = function()
+        local Lighting = game:GetService("Lighting")
+        Lighting.Brightness = (Lighting.Brightness or 2) + 1 -- เพิ่มทีละ 1
+        print("✅ เพิ่มแสงเรียบร้อย")
+    end
+})
